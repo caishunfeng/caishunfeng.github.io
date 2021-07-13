@@ -14,6 +14,12 @@ categories: linux-cpu
 - 进程内上下文切换：系统调用；（用户态 -> 内核态 -> 用户态）
 - 中断上下文切换：硬中断（硬件设备触发），软中断（内核触发）
 
+### 相关指标
+- CPU使用率(用户CPU、系统CPU)
+- 平均负载
+- 上下文切换次数(context switch)
+- 中断次数(自愿中断、非自愿中断)
+
 ### 相关工具指南
 ![]({{ site.url }}/assets/linux_cpu_tools.png)
 （摘自linux性能优化专栏-倪朋飞）
