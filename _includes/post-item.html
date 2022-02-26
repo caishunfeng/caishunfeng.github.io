@@ -1,0 +1,9 @@
+{%- assign post = include.post -%}
+
+{% unless post.hide %}
+    <h3>
+        <a class="post-link" href="{{ post.url | absolute_url }}" title="{{ post.title }}">
+            {{ post.title | escape}}
+        </a>
+    </h3>
+{% endunless %}

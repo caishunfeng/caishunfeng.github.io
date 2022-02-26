@@ -2,7 +2,8 @@
 layout: post
 title: "事务隔离级别"
 date: 2021-03-28 15:55:00 +0800
-categories: transaction-isolation-level
+category: transaction-isolation-level
+tags: [IT, Database]
 ---
 
 ### 事务特性：

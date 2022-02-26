@@ -1,0 +1,5 @@
+{% if include.categories.size > 0 %}
+    | {% for category in include.categories %}
+        <a href="/categories/#{{category}}">{{ category }}</a>    
+    {% endfor %}
+{% endif %}

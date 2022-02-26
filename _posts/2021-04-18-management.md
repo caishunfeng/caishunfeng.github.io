@@ -2,7 +2,8 @@
 layout: post
 title: "管理认知和角色定位"
 date: 2021-04-18 14:20:00 +0800
-categories: management
+category: management
+tags: [management]
 ---
 
 ### 什么是管理？

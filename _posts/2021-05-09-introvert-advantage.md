@@ -2,7 +2,8 @@
 layout: post
 title: "内向者优势"
 date: 2021-05-09 15:23:00 +0800
-categories: introvert-advantage
+category: introvert-advantage
+tags: [book]
 ---
 
 ### 读后感

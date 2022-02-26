@@ -1,0 +1,13 @@
+---
+layout: default
+title: 分类
+---
+
+{%- assign categories = site.posts | map: "categories" | uniq -%}
+
+{% for category in categories %}
+    <a id="{{category}}" href="#{{category}}"><h2>{{category}}</h2></a>
+    {% for post in site.categories[category] %}
+        {% include post-item.html post=post %}
+    {% endfor %}
+{% endfor %}

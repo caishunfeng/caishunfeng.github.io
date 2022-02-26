@@ -2,7 +2,8 @@
 layout: post
 title:  "分布式链路追踪"
 date:   2021-03-14 14:53:22 +0800
-categories: monitor trace
+category: monitor trace
+tags: [IT, trace]
 ---
 ### 背景：
 
@@ -111,6 +112,6 @@ public class FeignRequestInterceptor implements RequestInterceptor {
 - nodejs版实现（待补充）
 - go版实现（待补充）
 - [SkyWalking][skywalking]
-![]({{ site.url }}/assets/skywalking.png)
+![]({{ site.url }}/assets/imgs/skywalking.png)
 
 [skywalking]: https://github.com/apache/skywalking

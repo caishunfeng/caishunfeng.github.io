@@ -1,0 +1,13 @@
+---
+layout: default
+title: 标签
+---
+
+{%- assign tags = site.posts | map: "tags" | uniq -%}
+
+{% for tag in tags %}
+    <a id="{{tag}}" href="#{{tag}}"><h2>{{tag}}</h2></a>
+    {% for post in site.tags[tag] %}
+        {% include post-item.html post=post %}
+    {% endfor %}
+{% endfor %}
