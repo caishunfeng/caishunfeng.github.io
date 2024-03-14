@@ -1,0 +1,194 @@
+---
+title: DolphinScheduler-任务日志
+date: 2022-02-26 20:58:00 +0800
+categories: [DolphinScheduler]
+tags: [IT, DolphinScheduler]
+toc: true
+---
+
+> [Apache DolphinScheduler](https://github.com/apache/dolphinscheduler) 是一个分布式易扩展的可视化DAG工作流任务调度开源系统。
+>
+> 本文主要讲解关于DS (DolphinScheduler) 的任务日志收集的实现与优化。
+
+## 实现功能
+
+DS是以DAG工作流的方式将Task组装起来，在调度过程中，DAG工作流由Master节点进行分解，将任务Task分发到Worker节点上执行，每个任务执行过程中的日志均会被收集为任务日志。通过任务日志，用户可以方便地在UI上查看最新的任务执行过程。如下图所示：
+
+![](/images/ds-tasklog.png)
+
+## 实现原理
+
+通过logback SiftingAppender，可以实现动态将task日志分开打印到不同task日志文件的功能。
+
+<!--more-->
+
+### logback配置
+
+```xml
+<appender name="TASKLOGFILE" class="ch.qos.logback.classic.sift.SiftingAppender">
+    <filter class="org.apache.dolphinscheduler.server.log.TaskLogFilter"/>
+    <Discriminator class="org.apache.dolphinscheduler.server.log.TaskLogDiscriminator">
+        <key>taskAppId</key>
+        <logBase>${log.base}</logBase>
+    </Discriminator>
+    <sift>
+        <appender name="FILE-${taskAppId}" class="ch.qos.logback.core.FileAppender">
+            <file>${log.base}/${taskAppId}.log</file>
+            <encoder>
+                <pattern>
+                    [%level] %date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %logger{96}:[%line] - %messsage%n
+                </pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+            <append>true</append>
+        </appender>
+    </sift>
+</appender>
+```
+
+### Logback SiftingAppender
+
+Logback 将编写日志记录事件的任务委托给称为附加程序的组件，而`SiftingAppender`组件可以通过对子appender的管理，来达到动态MDC创建不同的appender实例，实现对日志的筛选。以上logback配置主要有`TaskLogFilter`和`TaskLogDiscriminator`两部分：
+
+`TaskLogFilter`进行log event的过滤，如：过滤格式不匹配或者level小于配置的log event
+
+```java
+@Override
+public FilterReply decide(ILoggingEvent event) {
+    FilterReply filterReply = FilterReply.DENY;
+    if (event.getThreadName().startsWith(TaskConstants.TASK_APPID_LOG_FORMAT)
+    && event.getLoggerName().startsWith(TaskConstants.TASK_LOG_LOGGER_NAME)
+    && event.getLevel().isGreaterOrEqual(level)) {
+    	filterReply = FilterReply.ACCEPT;
+    }
+    return filterReply;
+}
+```
+
+`TaskLogDiscriminator`定义taskAppId：
+
+```java
+@Override
+public String getDiscriminatingValue(ILoggingEvent event) {
+    String key = "unknown_task";
+    if (event.getLoggerName().startsWith(TaskConstants.TASK_LOG_LOGGER_NAME)) {
+        String threadName = event.getThreadName();
+        String part1 = threadName.split(Constants.EQUAL_SIGN)[1];
+        String prefix = TaskConstants.TASK_LOGGER_INFO_PREFIX + "-";
+        if (part1.startsWith(prefix)) {
+        	key = part1.substring(prefix.length()).replaceFirst("-", "/");
+        }
+    }
+    return key;
+}
+```
+
+## 关于优化
+
+优化前的逻辑是每个task都会用唯一的name指定一个logger，如：
+
+```java
+Logger logger = LoggerFactory.getLogger(LoggerUtils.buildTaskId(LoggerUtils.TASK_LOGGER_INFO_PREFIX,
+                taskInstance.getFirstSubmitTime(),
+                processInstance.getProcessDefinitionCode(),
+                processInstance.getProcessDefinitionVersion(),
+                taskInstance.getProcessInstanceId(),
+                taskInstance.getId()));
+```
+
+导致在getLogger的时候每次都会新建一个logger，而新建的过程是同步的，在高并发的情况下对性能影响严重
+
+```java
+@Override
+public final Logger getLogger(final String name) {
+    // 如果logger存在，直接返回
+    Logger childLogger = (Logger) loggerCache.get(name);
+    if (childLogger != null) {
+    	return childLogger;
+    }
+
+    String childName;
+    while (true) {
+        // 省略部分代码
+        synchronized (logger) {
+        	childLogger = logger.getChildByName(childName);
+        	if (childLogger == null) {
+        		childLogger = logger.createChildByName(childName);
+        		loggerCache.put(childName, childLogger);
+        	}
+        }
+        logger = childLogger;
+        if (h == -1) {
+        	return childLogger;
+        }
+    }
+}
+```
+
+### 优化思路：
+
+1. 用类名来指定logger，防止大量logger的创建；
+2. 收敛task操作入口，通过线程名来注入task的唯一标识，调整log的过滤逻辑和获取key的逻辑；
+
+worker的task入口收敛：`TaskExecuteThread.run`
+
+```java
+@Override
+public void run() {
+	// 省略部分代码
+	String taskLogName = LoggerUtils.buildTaskId(taskExecutionContext.getFirstSubmitTime(),
+                    taskExecutionContext.getProcessDefineCode(),
+                    taskExecutionContext.getProcessDefineVersion(),
+                    taskExecutionContext.getProcessInstanceId(),
+                    taskExecutionContext.getTaskInstanceId());
+	taskRequest.setTaskLogName(taskLogName);
+
+    // set the name of the current thread
+    Thread.currentThread().setName(taskLogName);
+
+    task = taskChannel.createTask(taskRequest);
+
+    // task init
+    this.task.init();
+    
+    // task handle
+    this.task.handle();
+    
+    // 省略部分代码
+}
+```
+
+master的task入口收敛：`BaseTaskProcessor.action`
+
+```java
+@Override
+public boolean action(TaskAction taskAction) {
+    String threadName = Thread.currentThread().getName();
+    if (StringUtils.isNotEmpty(threadLoggerInfoName)) {
+    	Thread.currentThread().setName(threadLoggerInfoName);
+    }
+    switch (taskAction) {
+        case STOP:
+        	return stop();
+        case PAUSE:
+        	return pause();
+        case TIMEOUT:
+        	return timeout();
+        case SUBMIT:
+        	return submit();
+        case RUN:
+        	return run();
+        case DISPATCH:
+        	return dispatch();
+        default:
+        	logger.error("unknown task action: {}", taskAction);
+    }
+    // reset thread name
+    Thread.currentThread().setName(threadName);
+    return false;
+}
+```
+
+## 参考
+
+[Logback Append](https://logback.qos.ch/manual/appenders.html)

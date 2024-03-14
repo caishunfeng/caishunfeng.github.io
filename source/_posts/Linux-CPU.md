@@ -1,0 +1,33 @@
+---
+title: Linux性能之CPU
+date: 2021-07-13 22:43:00
+categories: [Linux]
+tags: [IT, linux]
+---
+
+### 进程vs线程
+- 进程是系统资源分配的基本单元
+- 线程是任务调度执行的基本单元
+
+### 上下文切换
+- 进程间上下文切换：时间片(非自愿)、资源等待(自愿)、主动sleep；IO密集型的多为自愿上下文切换，CPU密集型的多为非自愿上下文切换；
+- 进程内上下文切换：系统调用；（用户态 -> 内核态 -> 用户态）
+- 中断上下文切换：硬中断（硬件设备触发），软中断（内核触发）
+
+<!--more-->
+
+### 相关指标
+- CPU使用率(用户CPU、系统CPU)
+- 平均负载
+- 上下文切换次数(context switch)
+- 中断次数(自愿中断、非自愿中断)
+
+### 相关工具指南
+![](/images/linux_cpu_tools.png)
+（摘自linux性能优化专栏-倪朋飞）
+
+### 拓展：
+- [perl-tools][perl-tools]
+
+[perl-tools]: https://github.com/brendangregg/perf-tools
+
