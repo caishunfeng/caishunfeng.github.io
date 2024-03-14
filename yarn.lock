@@ -1802,6 +1802,18 @@
     "moment" "^2.24.0"
     "semver" "^7.1.1"
 
+"hexo-deployer-git@^4.0.0":
+  "integrity" "sha512-28t1Q+4taB/UaBAP52W3mD/wcCwa2y2zBieUfBJFBZudbmVgiKJB5YedYILeyI5QByaUKAOwoupmdTbocdQ+CQ=="
+  "resolved" "https://registry.npmjs.org/hexo-deployer-git/-/hexo-deployer-git-4.0.0.tgz"
+  "version" "4.0.0"
+  dependencies:
+    "bluebird" "^3.7.2"
+    "hexo-fs" "^4.0.0"
+    "hexo-util" "^2.7.0"
+    "luxon" "^3.0.4"
+    "nunjucks" "^3.2.3"
+    "picocolors" "^1.0.0"
+
 "hexo-front-matter@^3.0.0":
   "integrity" "sha512-hSQTPUmB/BCe1BFYmXRkPyLk8rqbBqHCQq+rjwwOJuEfOADrFaVK2VPZb90tJzPyXE1xSxpgCxE/AZq0CyTVwg=="
   "resolved" "https://registry.npmjs.org/hexo-front-matter/-/hexo-front-matter-3.0.0.tgz"
@@ -1826,7 +1838,7 @@
     "graceful-fs" "^4.1.11"
     "hexo-util" "^2.0.0"
 
-"hexo-fs@^4.1.1":
+"hexo-fs@^4.0.0", "hexo-fs@^4.1.1":
   "integrity" "sha512-aDysNTyv8ElcerbFVbPLRXnYt+QDY6gAOZZ5DLbCxudY0Ywppqd+uZ03gZ2BDypIBvmNB27WYWYz76M+Yv/YXw=="
   "resolved" "https://registry.npmjs.org/hexo-fs/-/hexo-fs-4.1.1.tgz"
   "version" "4.1.1"
@@ -2419,6 +2431,11 @@
   "version" "6.0.0"
   dependencies:
     "yallist" "^4.0.0"
+
+"luxon@^3.0.4":
+  "integrity" "sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA=="
+  "resolved" "https://registry.npmjs.org/luxon/-/luxon-3.4.4.tgz"
+  "version" "3.4.4"
 
 "make-dir@^2.0.0", "make-dir@^2.1.0":
   "integrity" "sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA=="
