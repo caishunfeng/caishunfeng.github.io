@@ -1,7 +1,7 @@
 ---
 title: 内向者优势
 date: 2021-05-09 15:23:00
-categories: [读书]
+categories: [Book]
 tags: [book]
 ---
 

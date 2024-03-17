@@ -7,7 +7,7 @@ logo: /img/logo.svg
 # Page metadata configurations
 head:
     # URL or path to the website's icon
-    favicon: /img/favicon.svg
+    favicon: /images/kakaxi.svg
     # Web application manifests configuration
     # https://developer.mozilla.org/en-US/docs/Web/Manifest
     manifest:
@@ -109,7 +109,7 @@ navbar:
         Archives: /archives
         Categories: /categories
         Tags: /tags
-        About: /about
+#        About: /about
     # Links to be shown on the right of the navigation bar
     links:
         Download on GitHub:
@@ -205,10 +205,10 @@ donates:
         qrcode: '/images/chao.jpg'
 # Share plugin configurations
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Plugins/Share/
-share:
-    type: sharethis
-    # URL to the ShareThis share plugin script
-    install_url: ''
+#share:
+#    type: sharethis
+#    # URL to the ShareThis share plugin script
+#    install_url: ''
 # Sidebar configurations.
 # Please be noted that a sidebar is only visible when it has at least one widget
 sidebar:
@@ -231,11 +231,11 @@ widgets:
         # Author name
         author: caishunfeng
         # Author title
-        author_title: No title for freedom
+        author_title:
         # Author's current location
         location: China / ShenZhen
         # URL or path to the avatar image
-        avatar: 
+        avatar: /images/kakaxi.jpeg
         # Whether show the rounded avatar image
         avatar_rounded: false
         # Email address for the Gravatar

@@ -1,11 +1,11 @@
-title: Hexo
+title: Shunfeng Blog
 subtitle: ''
 description: ''
 keywords: null
 author: caishunfeng
 language: zh-CN
 timezone: ''
-url: http://tech.shunfeng.host
+url: https://caishunfeng.github.io/
 permalink: ':year/:month/:day/:title/'
 permalink_defaults: null
 pretty_urls:
