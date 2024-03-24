@@ -62,4 +62,4 @@ theme: icarus
 deploy:
   type: git
   repository: git@github.com:caishunfeng/caishunfeng.github.io.git
-  branch: gh-pages
+  branch: master
